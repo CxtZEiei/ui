@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>แบบสอบถามแมวน้อย</title>
+  <style>
+    body, html {
+      margin: 0; padding: 0; height: 100%;
+      display: flex; justify-content: center; align-items: center;
+      background: #ffe6f0;
+      font-family: "Kanit", sans-serif;
+      overflow-x: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 80vmin;
+      aspect-ratio: 1 / 1;
+      max-width: 500px;
+      background: #fff0f5;
+      box-shadow: 0 0 25px rgba(255, 105, 180, 0.3);
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      overflow: visible;
+      border-radius: 20px;
+      transform: scale(0.7);
+      transform-origin: center top;
+    }
+
+    #page0, #quizPage {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    #page0 {
+      display: flex;
+    }
+
+    #page0Message {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #d63384;
+      margin-bottom: 15px;
+    }
+
+    #page0ImageContainer {
+      width: 100%;
+      height: 60%;
+      background: #ffe0ec;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    #page0ImageContainer img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      aspect-ratio: 1 / 1;
+      display: block;
+    }
+
+    #page0NextBtn {
+      width: 50%;
+      padding: 12px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border: none;
+      background-color: #ff69b4;
+      color: white;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    #page0NextBtn:hover {
+      background-color: #ff1493;
+    }
+
+    #question {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #d63384;
+      min-height: 60px;
+      transition: opacity 0.3s ease;
+    }
+
+    .image {
+      width: 100%;
+      aspect-ratio: 1 / 1; /* จัตุรัส */
+      margin: 20px 0;
+      background: #ffe0ec;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    #image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.3s ease;
+    }
+
+    .buttons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    button.agree, button.reject {
+      width: 48%;
+      padding: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      transform-origin: center center;
+      user-select: none;
+    }
+
+    button.agree {
+      background-color: #ff69b4;
+      color: white;
+    }
+
+    button.agree:hover {
+      background-color: #ff1493;
+    }
+
+    button.reject {
+      background-color: #f88379;
+      color: white;
+    }
+
+    button.reject:hover {
+      background-color: #ff5e6c;
+    }
+
+    #heartBtn {
+      margin-top: 10px;
+      font-size: 2.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #ff4d88;
+      user-select: none;
+      transition: transform 0.2s;
+      position: relative;
+      z-index: 10;
+      display: none;
+    }
+
+    #heartBtn:hover {
+      transform: scale(1.3);
+    }
+
+    #specialAgreeBtn {
+      display: none;
+      margin-top: 15px;
+      width: 120px;
+      padding: 10px;
+      font-size: 1.2rem;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      align-self: center;
+      user-select: none;
+      z-index: 10;
+      position: relative;
+    }
+
+    #specialAgreeBtn:hover {
+      background-color: #ff1493;
+    }
+
+    .heart-particle {
+      position: absolute;
+      font-size: 2rem;
+      user-select: none;
+      pointer-events: none;
+      will-change: transform, opacity;
+      animation-fill-mode: forwards;
+      z-index: 1000;
+      opacity: 1;
+      transform-origin: center center;
+    }
+
+    #record {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 90px;
+      height: 90px;
+      cursor: pointer;
+      z-index: 20;
+      transition: transform 0.4s ease-in-out;
+      transform-origin: center center;
+      transform: translate(50%, -50%);
+    }
+
+    #record.spin {
+      animation: spin 4s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: translate(50%, -50%) rotate(0deg); }
+      to { transform: translate(50%, -50%) rotate(360deg); }
+    }
+
+    .fade-out {
+      opacity: 0 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- หน้า 0 -->
+    <div id="page0">
+      <div id="page0Message">พร้อมตอบคำถามมั้ยงับ?</div>
+      <div id="page0ImageContainer">
+        <img src="https://static.vecteezy.com/system/resources/previews/039/096/120/original/dog-shiba-inu-doodle-cartoon-png.png" alt="รูปหมา" />
+      </div>
+      <button id="page0NextBtn">ถัดไป</button>
+    </div>
+
+    <!-- หน้าแบบสอบถาม -->
+    <div id="quizPage">
+      <div id="question">กลับมาเป็นแมวเด่กกให้เค้าได้มั้ยยTT</div>
+      <div class="image">
+        <img id="image" src="images/cxtz1.png" alt="รูปคำถาม" />
+      </div>
+
+      <div class="buttons" id="btnContainer">
+        <button class="agree" onclick="agree()">ตกลง</button>
+        <button class="reject" onclick="disagree()">ปฏิเสธ</button>
+      </div>
+
+      <button id="heartBtn">❤️</button>
+      <button id="specialAgreeBtn">ตกลง</button>
+    </div>
+
+    <!-- แผ่นเสียง -->
+    <img id="record" src="images/disk.png" alt="แผ่นเสียง" />
+    <audio id="bgMusic" loop>
+      <source src="arctic-monkeys-i-wanna-be-yours.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    const page0 = document.getElementById("page0");
+    const quizPage = document.getElementById("quizPage");
+    const record = document.getElementById("record");
+    const bgMusic = document.getElementById("bgMusic");
+
+    let currentPage = 1;
+    let disagreeCount = 0;
+    let isPlaying = false;
+
+    const questions = {
+  0: "พร้อมตอบคำถามมั้ยงับ?",
+  1: "กลับมาเป็นแมวเด่กกให้เค้าได้มั้ยยTT",
+  2: "เย่ๆๆๆๆขอบคุณนะ หมาแก่มีเจ้าของแยะ มีแมวเด่กแย้วว<3",
+  3: "เค้าขอโอกาสอีกรอบบได้มั้ย",
+  4: "เค้าสัญญาจะปรับปรุงตัวให้ดีกว่าเดิมบี๋ไม่ชอบอันไหนบอกเค้าได้เลยTT",
+  5: "มันสิไห้ละนั่น ขอได้มั้ยยTT",
+  6: "Alongkorn MISSION FAIL"
+};
+
+const images = {
+  0: "https://static.vecteezy.com/system/resources/previews/039/096/120/original/dog-shiba-inu-doodle-cartoon-png.png", // หน้า 0 หมาชิบะ
+  1: "images/cxtz1.png",
+  2: "images/cxtz5.jpg",
+  3: "images/cxtz3.jpg",
+  4: "images/cxtz2.jpg",  // หน้า 4 ใช้ cxtz5.jpg
+  5: "images/cxtz4.jpg",  // หน้า 5 ใช้ cxtz4.jpg
+  6: "images/cxtz6.jpg"
+};
+
+
+    document.getElementById("page0NextBtn").onclick = () => {
+      page0.style.display = "none";
+      quizPage.style.display = "flex";
+      renderPage(currentPage);
+    };
+
+    async function sleep(ms) {
+      return new Promise(res => setTimeout(res, ms));
+    }
+
+    async function renderPage(page) {
+      const questionEl = document.getElementById("question");
+      const imageEl = document.getElementById("image");
+      const btnContainer = document.getElementById("btnContainer");
+      const heartBtn = document.getElementById("heartBtn");
+      const specialAgreeBtn = document.getElementById("specialAgreeBtn");
+
+      questionEl.classList.add("fade-out");
+      imageEl.classList.add("fade-out");
+      await sleep(300);
+
+      questionEl.innerHTML = questions[page];
+      imageEl.src = images[page];
+
+      if (page === 2) {
+        btnContainer.style.display = "none";
+        heartBtn.style.display = "inline-block";
+        specialAgreeBtn.style.display = "inline-block";
+      } else if (page === 6) {
+        btnContainer.style.display = "none";
+        heartBtn.style.display = "none";
+        specialAgreeBtn.style.display = "none";
+      } else {
+        btnContainer.style.display = "flex";
+        heartBtn.style.display = "none";
+        specialAgreeBtn.style.display = "none";
+      }
+
+      const agreeBtn = document.querySelector("#btnContainer .agree");
+      if (agreeBtn) agreeBtn.style.transform = "scale(1)";
+
+      questionEl.classList.remove("fade-out");
+      imageEl.classList.remove("fade-out");
+      currentPage = page;
+    }
+
+    async function agree() {
+      currentPage = 2;
+      await renderPage(currentPage);
+    }
+
+    async function disagree() {
+      currentPage = currentPage === 1 ? 3 : currentPage + 1;
+      if (currentPage > 6) return;
+      await renderPage(currentPage);
+
+      if ([1, 3, 4, 5].includes(currentPage)) {
+        disagreeCount++;
+        const scale = Math.min(1 + 0.1 * disagreeCount, 1.5);
+        const agreeBtn = document.querySelector("#btnContainer .agree");
+        if (agreeBtn) agreeBtn.style.transform = `scale(${scale})`;
+      }
+    }
+
+    document.getElementById("heartBtn").onclick = () => {
+      createHeartsRandom(6 + Math.floor(Math.random() * 4));
+    };
+
+    function createHeartsRandom(count) {
+  const container = document.querySelector(".container");
+  const emojis = ["❤️", "🌸", "🌼", "🦋", "🌺", "💮", "🪷", "🌻"];
+  const heartBtn = document.getElementById("heartBtn");
+  const startX = heartBtn.offsetLeft + heartBtn.offsetWidth / 2;
+  const startY = heartBtn.offsetTop + heartBtn.offsetHeight / 2;
+
+  for (let i = 0; i < count; i++) {
+    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    const particle = document.createElement("div");
+    particle.classList.add("heart-particle");
+    particle.textContent = emoji;
+    particle.style.left = `${startX}px`;
+    particle.style.top = `${startY}px`;
+    container.appendChild(particle);
+
+    // กระจายแนวแกน X ซ้ายขวา (±45 px) และขึ้นบนฟ้า (แนวแกน Y -140 ถึง -180 px) สูงขึ้น
+    const offsetX = (Math.random() * 90) - 45; // -45 ถึง +45 px
+    const offsetY = -(140 + Math.random() * 40); // -140 ถึง -180 px (สูงขึ้นกว่าเดิม)
+
+    particle.animate([
+      { transform: `translate(0, 0) scale(1)`, opacity: 1 },
+      { transform: `translate(${offsetX}px, ${offsetY}px) scale(1.5)`, opacity: 0 }
+    ], {
+      duration: 2500, // 1.5 วินาที
+      easing: "ease-out",
+      fill: "forwards"
+    });
+
+    setTimeout(() => particle.remove(), 1500);
+  }
+}
+
+
+
+    document.getElementById("specialAgreeBtn").onclick = () => {
+      alert("ขอบคุณที่กดตกลง ❤️");
+    };
+
+    record.onclick = () => {
+      if (!isPlaying) {
+        bgMusic.play();
+        record.classList.add("spin");
+        isPlaying = true;
+      } else {
+        bgMusic.pause();
+        record.classList.remove("spin");
+        isPlaying = false;
+      }
+    };
+
+    page0.style.display = "flex";
+  </script>
+</body>
+</html>
